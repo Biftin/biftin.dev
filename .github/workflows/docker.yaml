@@ -95,6 +95,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-actor, prepare, build]
     if: ${{ needs.check-actor.outputs.should_run == 'true' }}
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: snok/container-retention-policy@v3.0.0
         with:
