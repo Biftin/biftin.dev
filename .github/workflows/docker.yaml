@@ -88,6 +88,10 @@ jobs:
     needs: [check-actor, build]
     if: ${{ needs.check-actor.outputs.should_run == 'true' }}
     steps:
+      - id: lower-image-name
+        name: Lower case image name
+        run: echo "image-name=${IMAGE_NAME@L}" >> $GITHUB_OUTPUT
+
       - uses: snok/container-retention-policy@v3.0.0
         with:
           account: user
