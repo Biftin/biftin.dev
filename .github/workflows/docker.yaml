@@ -3,10 +3,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - production
+      - prod
   pull_request:
     branches:
-      - production
+      - prod
 
 env:
   REGISTRY: ghcr.io
