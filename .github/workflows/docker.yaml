@@ -1,12 +1,12 @@
 name: Docker CI
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - production
-  # pull_request:
-  #   branches:
-  #     - production
+  push:
+    branches:
+      - production
+  pull_request:
+    branches:
+      - production
 
 env:
   REGISTRY: ghcr.io
@@ -15,7 +15,17 @@ env:
   IMAGE_LATEST: latest
 
 jobs:
+  check-actor:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ github.actor != 'github-actions[bot]' && github.actor != 'actions-user' && github.actor != 'GitHub Actions' }}
+    steps:
+      - name: Check Actor
+        run: echo "Actor is ${{ github.actor }}"
+
   build:
+    needs: check-actor
+    if: ${{ needs.check-actor.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -49,7 +59,8 @@ jobs:
 
   update-manifest:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [check-actor, build]
+    if: ${{ needs.check-actor.outputs.should_run == 'true' }}
     permissions:
       contents: write
     steps:
