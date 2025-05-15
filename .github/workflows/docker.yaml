@@ -1,12 +1,12 @@
 name: Docker CI
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - production
-  pull_request:
-    branches:
-      - production
+  # push:
+  #   branches:
+  #     - production
+  # pull_request:
+  #   branches:
+  #     - production
 
 env:
   REGISTRY: ghcr.io
@@ -46,3 +46,28 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ steps.lower-image-name.outputs.image-name }}:${{ env.IMAGE_TAG }}
             ${{ env.REGISTRY }}/${{ steps.lower-image-name.outputs.image-name }}:${{ env.IMAGE_LATEST }}
+
+  update-manifest:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - id: lower-image-name
+        name: Lower case image name
+        run: echo "image-name=${IMAGE_NAME@L}" >> $GITHUB_OUTPUT
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update manifest
+        run: |
+          sed -i "s|${{ env.REGISTRY }}/${{ steps.lower-image-name.outputs.image-name }}:.*|${{ env.REGISTRY }}/${{ steps.lower-image-name.outputs.image-name }}:${{ github.sha }}|g" argocd/biftin-dev.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git add argocd/biftin-dev.yaml
+          git commit -m "Update image tag to ${{ github.sha }}"
+          git push origin HEAD
