@@ -81,7 +81,7 @@ jobs:
 
       - name: Update manifest
         run: |
-          sed -i "s|${{ env.REGISTRY }}/${{ needs.prepare.outputs.image-name }}:.*|${{ env.REGISTRY }}/${{ needs.prepare.outputs.image-name }}:${{ github.sha }}|g" argocd/biftin-dev.yaml
+          sed -i "s|${{ env.REGISTRY }}/${{ needs.prepare.outputs.image-name }}:.*|${{ env.REGISTRY }}/${{ needs.prepare.outputs.image-name }}:${{ github.sha }}|g" argocd/02-deployment.yaml
 
       - name: Commit and push changes
         run: |
