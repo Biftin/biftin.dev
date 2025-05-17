@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: biftin-dev
-        image: ghcr.io/biftin/biftin.dev:a4120cfa8967533fd34a640f801ffc682ebb7278
+        image: ghcr.io/biftin/biftin.dev:4790bac4236a1f3401b3e4a0e0588317e978a534
         ports:
         - containerPort: 80
         resources:
